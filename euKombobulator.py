@@ -39,8 +39,6 @@ class euKombobulator():
 
     class Utilities():
         def fit_image_retain_aspect_ratio(self,image_resolution,target_resolution):
-            image_aspect_ratio = image_resolution[0] / image_resolution[1]
-            print(image_aspect_ratio)
             target_aspect_ratio = target_resolution[0] / target_resolution[1]
             if target_resolution[0] > target_resolution[1]:
                 if image_resolution[0] > image_resolution[1]:
@@ -49,22 +47,22 @@ class euKombobulator():
                     n_size = target_resolution[0]/target_aspect_ratio,target_resolution[1]
             else:
                 if image_resolution[0] > image_resolution[1]:
-                    n_size = target_resolution[0],target_resolution[1]/target_aspect_ratio
+                    n_size = target_resolution[0]*target_aspect_ratio,target_resolution[1]
                 else:
-                    n_size = target_resolution[0]/target_aspect_ratio,target_resolution[1]
+                    n_size = target_resolution[0],target_resolution[1]*target_aspect_ratio
             return n_size
 
         def generate_default_button(self,resolution,pressed = False,hover = False):
             btn_canvas = pygame.Surface(resolution)
             if pressed:
-                pygame.draw.rect(btn_canvas,(150,150,150),(0,0,resolution[0],resolution[1]))
-                pygame.draw.rect(btn_canvas,(50,50,50),(0,0,resolution[0],resolution[1]),5)
+                pygame.draw.rect(btn_canvas,(150,150,150),(0,0,resolution[0],resolution[1]),0,10)
+                pygame.draw.rect(btn_canvas,(50,50,50),(0,0,resolution[0],resolution[1]),5,10)
             elif hover:
-                pygame.draw.rect(btn_canvas,(200,200,200),(0,0,resolution[0],resolution[1]))
-                pygame.draw.rect(btn_canvas,(100,100,100),(0,0,resolution[0],resolution[1]),5)
+                pygame.draw.rect(btn_canvas,(200,200,200),(0,0,resolution[0],resolution[1]),0,10)
+                pygame.draw.rect(btn_canvas,(100,100,100),(0,0,resolution[0],resolution[1]),5,10)
             else:
-                pygame.draw.rect(btn_canvas,(220,220,220),(0,0,resolution[0],resolution[1]))
-                pygame.draw.rect(btn_canvas,(120,120,120),(0,0,resolution[0],resolution[1]),5)
+                pygame.draw.rect(btn_canvas,(220,220,220),(0,0,resolution[0],resolution[1]),0,10)
+                pygame.draw.rect(btn_canvas,(120,120,120),(0,0,resolution[0],resolution[1]),5,10)
             return btn_canvas
 
     class UserInterface():
@@ -83,11 +81,17 @@ class euKombobulator():
                     self.hovered = False
                     self.pressed = False
                     self.clicked = False
+                    self.norm_cursor_position = [0,0]
+                    self.cursor_position = [0,0]
                     self.n_clicked = 0
 
                 def update(self,inputregister):
                     if self.rect.collidepoint(inputregister.mouse_position):
-                        self.hover = True
+                        self.hovered = True
+                        self.norm_cursor_position[0] = round((inputregister.mouse_position[0]-self.rect[0]) / (self.rect[2]-1),2)
+                        self.norm_cursor_position[1] = round((inputregister.mouse_position[1]-self.rect[1]) / (self.rect[3]-1),2)
+                        self.cursor_position[0] = inputregister.mouse_position[0]-self.rect[0]
+                        self.cursor_position[1] = inputregister.mouse_position[1]-self.rect[1]
                         if inputregister.mouse_button[0]:
                             if not self.pressed:
                                 self.clicked = True
@@ -98,7 +102,7 @@ class euKombobulator():
                         else:
                             self.pressed = False
                     else:
-                        self.hover = False
+                        self.hovered = False
                         self.pressed = False
                         self.clicked = False
 
@@ -117,7 +121,7 @@ class euKombobulator():
 
                 def reload_text(self):
                     self.canvas = pygame.Surface(self.size)
-                    self.canvas.blit(self.font.render(self.text,True,self.color),(0,0))
+                    self.canvas.blit(self.font.render(str(self.text),True,self.color),(0,0))
 
             class Sprite():
                 def __init__(self,rect,image_path):
@@ -192,6 +196,12 @@ class euKombobulator():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
+                elif event.type == pygame.VIDEORESIZE:
+                    self.resolution = event.size
+                    print("Resized! Reloading...")
+                    self.UI = self.UserInterface(self.resolution,self.settings["screen"]["box_size"])
+                    self.load_scene(self.scene)
+
 
             self.clock.tick(self.target_framerate)
             self.frame += 1

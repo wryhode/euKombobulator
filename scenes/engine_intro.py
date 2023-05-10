@@ -5,10 +5,11 @@ def attach(euKombobulator):
     euk = euKombobulator
 
     imgsize = euk.utils.fit_image_retain_aspect_ratio([1920,1920],euk.resolution)
-    logo_img = euk.UI.Element.Sprite(pygame.Rect((euk.resolution[0]/2-imgsize[0]/2,0,imgsize[0],imgsize[1])),"./logo.png")
-    euk.UI.add_element(logo_img)
+    logo_img = euk.UI.add_element(euk.UI.Element.Sprite(pygame.Rect((euk.resolution[0]/2-imgsize[0]/2,0,imgsize[0],imgsize[1])),"./logo.png"))
+
     
-    euk.UI.add_element(euk.UI.Element.EUK_Watermark(euk.UI.get_box_grid_rect(pygame.Rect(10,9,7,1))))
+    watermark = euk.UI.add_element(euk.UI.Element.EUK_Watermark(euk.UI.get_box_grid_rect(pygame.Rect(10,9,7,1))))
+    watermark.canvas.set_alpha(128)
 
 def update():
     if euk.scene_frame**1.3 < 255:
