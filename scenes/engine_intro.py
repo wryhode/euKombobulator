@@ -14,7 +14,7 @@ def attach(euKombobulator):
     watermark.canvas.set_alpha(128)
 
 def update():
-    if euk.scene_frame**1.3 < 255:
-        logo_img.canvas.set_alpha(255-euk.scene_frame**1.3)
+    if euk.scene_frame**1.5 < 255:
+        logo_img.canvas.set_alpha(255-euk.scene_frame**1.5)
     else:
         euk.load_scene("menu")

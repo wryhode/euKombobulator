@@ -14,7 +14,6 @@ def update():
     player_img.rect[0] = player_pos[0]
     player_img.rect[1] = player_pos[1]
 
-
     if keys[pygame.K_UP]:
         player_pos[1] -= 1
     elif keys[pygame.K_DOWN]:

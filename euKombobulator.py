@@ -33,8 +33,12 @@ class euKombobulator():
             self.mouse_position = [0,0]
             self.mouse_button = [False,False,False]
             self.keyboard = [None]
+            self.key_click = []
+            self.mouse_click = []
 
         def update(self):
+            self.key_click = []
+            self.mouse_click = []
             self.mouse_position = pygame.mouse.get_pos()
             self.mouse_button = pygame.mouse.get_pressed()
             self.keyboard = pygame.key.get_pressed()
@@ -240,8 +244,11 @@ class euKombobulator():
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.KEYDOWN:
+                    self.input.key_click.append(event.key)
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.input.mouse_click.append(event.button)
                 elif event.type == pygame.VIDEORESIZE:
                     self.resolution = event.size
                     print("Resized! Reloading...")
