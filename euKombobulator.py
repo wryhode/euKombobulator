@@ -17,7 +17,9 @@ class euKombobulator():
         self.target_framerate = self.settings["screen"]["target_framerate"]
 
         self.UI = self.UserInterface(self.resolution,self.settings["screen"]["box_size"])
+        self.particlesystem = self.ParticleSystem()
         self.utils = self.Utilities()
+        self.globals = []
         self.main_run_loop()
 
     class Settings():
@@ -64,6 +66,37 @@ class euKombobulator():
                 pygame.draw.rect(btn_canvas,(220,220,220),(0,0,resolution[0],resolution[1]),0,10)
                 pygame.draw.rect(btn_canvas,(120,120,120),(0,0,resolution[0],resolution[1]),5,10)
             return btn_canvas
+
+    class ParticleSystem():
+        class Particle():
+            def __init__(self,pos,color,size,velocity=[0,0],gravity=[0,0],lifetime=1000):
+                self.pos = pos
+                self.color = color
+                self.size = size
+                self.gravity = gravity
+                self.velocity = velocity
+                self.lifetimer = 0
+                self.lifetime = lifetime
+
+            def update(self,canvas):
+                self.velocity[0] += self.gravity[0]
+                self.velocity[1] += self.gravity[1]
+                self.pos[0] += self.velocity[0]
+                self.pos[1] += self.velocity[1]
+                self.lifetimer += 1
+                pygame.draw.circle(canvas,self.color,self.pos,self.size)
+                if self.lifetimer > self.lifetime:
+                    return False
+                else:
+                    return True
+
+        def __init__(self):
+            self.particles = []
+        
+    class Global():
+        def __init__(self,value,name):
+            self.value = value
+            self.name = name
 
     class UserInterface():
         def __init__(self,resolution,box_size):
@@ -171,7 +204,20 @@ class euKombobulator():
         def update(self):
             for e in self.elements:
                 e.update()
-                
+
+    def global_variable(self,global_v):
+            self.globals.append(global_v)
+
+    def get_global(self,name):
+        for v in self.globals:
+            if v.name == name:
+                return v.value
+            
+    def set_global(self,name,value):
+        for v in self.globals:
+            if v.name == name:
+                v.value = value
+
     def main_run_loop(self):
         self.scene = self.settings["scenes"]["startscene"]
         self.scenes = []
@@ -211,7 +257,11 @@ class euKombobulator():
             for e in self.UI.elements:
                 e.update(self.input)
                 self.display.blit(e.canvas,e.rect)
-            
+
+            for i,p in enumerate(self.particlesystem.particles):
+                if not p.update(self.display):
+                    self.particlesystem.particles.pop(i)
+
             self.scenes[self.scenes_str.index(self.scene)].update()
 
             #self.UI.test_box_grid(self.display)
