@@ -3,4 +3,4 @@ resolution = [1024,576]
 box_size = [17,10]
 target_framerate = 60
 [scenes]
-startscene = "leveleditor"
+startscene = "engine_intro"

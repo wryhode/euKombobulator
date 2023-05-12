@@ -7,6 +7,9 @@ def attach(euKombobulator):
 
     debugtext = euk.UI.add_element(euk.UI.Element.Text(euk.UI.get_box_grid_rect(pygame.Rect(0,0,17,1)),"Debug text",(255,255,255),"./font/Solid-Mono.ttf"))
 
+    watermark = euk.UI.add_element(euk.UI.Element.EUK_Watermark(euk.UI.get_box_grid_rect(pygame.Rect(10,9,7,1))))
+    watermark.canvas.set_alpha(128)
+
     scroll = [0,0]
     world_vertecies = []
     world_segments = []
